@@ -4,6 +4,7 @@ import (
 	"bus-sample-project/counter"
 	"bus-sample-project/printer"
 	"fmt"
+	"math/rand"
 
 	"github.com/mustafaturan/bus"
 	"github.com/mustafaturan/monoton"
@@ -22,7 +23,7 @@ func init() {
 	}
 
 	// regiter topics
-	bus.RegisterTopics("user.created", "user.canceled")
+	bus.RegisterTopics("order.created", "order.canceled")
 
 	// load printer package
 	printer.Load()
@@ -32,21 +33,20 @@ func init() {
 	// the init function on load
 }
 
-// User struct for sample event
-type User struct {
-	Name  string
-	Email string
+// Order struct for sample event
+type Order struct {
+	Name   string
+	Amount int
 }
 
 func main() {
 	txID := monoton.Next()
 	for i := 0; i < 3; i++ {
-		name := fmt.Sprintf("MyName#%d", i)
-		email := fmt.Sprintf("sample%d@example.com", i)
-		bus.Emit("user.created", User{Name: name, Email: email}, txID)
+		name := fmt.Sprintf("Product #%d", i)
+		bus.Emit("order.created", Order{Name: name, Amount: amount()}, txID)
 	}
 
-	bus.Emit("user.canceled", User{Name: "Another", Email: "sample@example.com"}, "")
+	bus.Emit("order.canceled", Order{Name: "Product #N", Amount: amount()}, "")
 
 	// Let's print event counts for each topic
 	for _, topic := range bus.ListTopics() {
@@ -56,4 +56,10 @@ func main() {
 			counter.FetchEventCount(topic.Name),
 		)
 	}
+}
+
+func amount() int {
+	max := 100
+	min := 10
+	return rand.Intn(max-min) + min
 }
