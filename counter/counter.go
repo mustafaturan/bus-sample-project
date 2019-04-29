@@ -13,7 +13,7 @@ var c chan *bus.Event
 func init() {
 	h := bus.Handler{Handle: count, Matcher: ".*"}
 	bus.RegisterHandler("counter", &h)
-	fmt.Printf("Regitered counter handler...\n")
+	fmt.Printf("Registered counter handler...\n")
 
 	topics = make(map[string]uint, 0)
 	c = make(chan *bus.Event)

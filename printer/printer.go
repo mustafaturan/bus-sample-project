@@ -8,7 +8,7 @@ import (
 func init() {
 	h := bus.Handler{Handle: print, Matcher: ".*"}
 	bus.RegisterHandler("printer", &h)
-	fmt.Printf("Regitered printer handler...\n")
+	fmt.Printf("Registered printer handler...\n")
 }
 
 func print(e *bus.Event) {
