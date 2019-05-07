@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bus-sample-project/calculator"
 	"bus-sample-project/counter"
+	"bus-sample-project/models"
 	"bus-sample-project/printer"
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/mustafaturan/bus"
 	"github.com/mustafaturan/monoton"
@@ -28,25 +31,29 @@ func init() {
 	// load printer package
 	printer.Load()
 
-	// no need to load counter package since we are running the
-	// FetchEventCount function from the counter package, it will auto execute
-	// the init function on load
-}
-
-// Order struct for sample event
-type Order struct {
-	Name   string
-	Amount int
+	// no need to load counter and calculator packages since we are running the
+	// FetchEventCount, and TotalAmount function from the counter package, it
+	// will auto execute the init function on load
 }
 
 func main() {
 	txID := monoton.Next()
 	for i := 0; i < 3; i++ {
-		name := fmt.Sprintf("Product #%d", i)
-		bus.Emit("order.created", Order{Name: name, Amount: amount()}, txID)
+		bus.Emit(
+			"order.created",
+			models.Order{Name: fmt.Sprintf("Product #%d", i), Amount: randomAmount()},
+			txID,
+		)
 	}
 
-	bus.Emit("order.canceled", Order{Name: "Product #N", Amount: amount()}, "")
+	bus.Emit(
+		"order.canceled", // topic
+		models.Order{Name: "Product #N", Amount: randomAmount()}, // data
+		"", // when blank bus package auto assigns an ID using the provided gen
+	)
+
+	// proper way to handle this to use wait groups
+	time.Sleep(time.Millisecond * 25)
 
 	// Let's print event counts for each topic
 	for _, topic := range bus.ListTopics() {
@@ -56,9 +63,11 @@ func main() {
 			counter.FetchEventCount(topic.Name),
 		)
 	}
+
+	fmt.Printf("Order total amount %d\n", calculator.TotalAmount())
 }
 
-func amount() int {
+func randomAmount() int {
 	max := 100
 	min := 10
 	return rand.Intn(max-min) + min
