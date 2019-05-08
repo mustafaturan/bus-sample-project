@@ -13,7 +13,7 @@ go get github.com/mustafaturan/monoton
 go get github.com/mustafaturan/bus
 ```
 
-## Scenerio
+## Scenario
 
 Assume that project has order data model and for each order creation and
 cancellation we want to log order with the time of creation, count how many
