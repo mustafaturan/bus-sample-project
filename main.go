@@ -52,9 +52,17 @@ func main() {
 		"", // when blank bus package auto assigns an ID using the provided gen
 	)
 
-	// proper way to handle this to use wait groups
+	// printer consumer processed all events at that moment since it is synchronous
+	fmt.Println("You should see 4 events printed above!^^^")
+
+	// give some time to process events for async consumers
 	time.Sleep(time.Millisecond * 25)
 
+	printEventCounts()
+	printOrderTotalAmount()
+}
+
+func printEventCounts() {
 	// Let's print event counts for each topic
 	for _, topic := range bus.ListTopics() {
 		fmt.Printf(
@@ -63,7 +71,9 @@ func main() {
 			counter.FetchEventCount(topic.Name),
 		)
 	}
+}
 
+func printOrderTotalAmount() {
 	fmt.Printf("Order total amount %d\n", calculator.TotalAmount())
 }
 

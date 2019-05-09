@@ -106,24 +106,31 @@ go run main.go
 
 The execution of the emitting will result similar output:
 
+**On load:**
+
 ```shell
 Registered calculator handler...
 Registered counter handler...
 Registered printer handler...
+```
 
-Event for order.created: &{ID:0RPl6YCb00010001 TxID:0RPl6YCb00000001 Topic:0xc0000c0060 Data:{Name:Product #0 Amount:51} OccurredAt:1557205730805205000}
+**After emitting events:**
 
-
-Event for order.created: &{ID:0RPl6YCb00020001 TxID:0RPl6YCb00000001 Topic:0xc0000c0060 Data:{Name:Product #1 Amount:97} OccurredAt:1557205730805265000}
-
-
-Event for order.created: &{ID:0RPl6YCb00030001 TxID:0RPl6YCb00000001 Topic:0xc0000c0060 Data:{Name:Product #2 Amount:57} OccurredAt:1557205730805290000}
+```shell
+Event for order.created: &{ID:0RPwZrc400010001 TxID:0RPwZrc400000001 Topic:0xc00009a090 Data:{Name:Product #0 Amount:51} OccurredAt:1557375256628182000}
 
 
-Event for order.canceled: &{ID:0RPl6YCb00040001 TxID:0RPl6YCb00050001 Topic:0xc0000c01e0 Data:{Name:Product #N Amount:39} OccurredAt:1557205730805325000}
+Event for order.created: &{ID:0RPwZrc400020001 TxID:0RPwZrc400000001 Topic:0xc00009a090 Data:{Name:Product #1 Amount:97} OccurredAt:1557375256628257000}
 
-Total evet count for order.created: 3
+
+Event for order.created: &{ID:0RPwZrc400030001 TxID:0RPwZrc400000001 Topic:0xc00009a090 Data:{Name:Product #2 Amount:57} OccurredAt:1557375256628283000}
+
+
+Event for order.canceled: &{ID:0RPwZrc400040001 TxID:0RPwZrc400050001 Topic:0xc00009a210 Data:{Name:Product #N Amount:39} OccurredAt:1557375256628348000}
+
+You should see 4 events printed above!^^^
 Total evet count for order.canceled: 1
+Total evet count for order.created: 3
 Order total amount 166
 ```
 
