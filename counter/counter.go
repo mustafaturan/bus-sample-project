@@ -11,8 +11,8 @@ var topics map[string]uint
 
 var c chan *bus.Event
 
-// Load registers the counter handler
-func Load(wg *sync.WaitGroup) {
+// Start registers the counter handler
+func Start(wg *sync.WaitGroup) {
 	h := bus.Handler{Handle: count, Matcher: ".*"}
 	bus.RegisterHandler("counter", &h)
 	fmt.Printf("Registered counter handler...\n")
@@ -24,7 +24,7 @@ func Load(wg *sync.WaitGroup) {
 	go increment(wg)
 }
 
-func Close() {
+func Stop() {
 	c <- nil
 }
 
@@ -33,8 +33,8 @@ func count(e *bus.Event) {
 }
 
 func increment(wg *sync.WaitGroup) {
-	defer printEventCounts()
 	defer wg.Done()
+	defer printEventCounts()
 	for {
 		e := <-c
 		if e == nil {

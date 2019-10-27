@@ -39,10 +39,10 @@ func init() {
 func main() {
 	var wg sync.WaitGroup
 	// load printer package
-	counter.Load(&wg)
+	counter.Start(&wg)
 
 	// load printer package
-	calculator.Load(&wg)
+	calculator.Start(&wg)
 
 	txID := monoton.Next()
 	for i := 0; i < 3; i++ {
@@ -62,8 +62,8 @@ func main() {
 	// printer consumer processed all events at that moment since it is synchronous
 	fmt.Println("You should see 4 events printed above!^^^")
 
-	counter.Close()
-	calculator.Close()
+	counter.Stop()
+	calculator.Stop()
 	// give some time to process events for async consumers
 	wg.Wait()
 }

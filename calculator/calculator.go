@@ -12,8 +12,8 @@ var total int64
 
 var c chan *bus.Event
 
-// Load registers the calculator handler
-func Load(wg *sync.WaitGroup) {
+// Start registers the calculator handler
+func Start(wg *sync.WaitGroup) {
 	h := bus.Handler{Handle: sum, Matcher: "^order.(created|canceled)$"}
 	bus.RegisterHandler("calculator", &h)
 	fmt.Printf("Registered calculator handler...\n")
@@ -24,7 +24,7 @@ func Load(wg *sync.WaitGroup) {
 	go calculate(wg)
 }
 
-func Close() {
+func Stop() {
 	c <- nil
 }
 
@@ -33,8 +33,8 @@ func sum(e *bus.Event) {
 }
 
 func calculate(wg *sync.WaitGroup) {
-	defer printTotal()
 	defer wg.Done()
+	defer printTotal()
 	for {
 		e := <-c
 		if e == nil {
