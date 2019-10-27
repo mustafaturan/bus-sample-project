@@ -7,7 +7,7 @@ import (
 	"bus-sample-project/printer"
 	"fmt"
 	"math/rand"
-	"time"
+	"sync"
 
 	"github.com/mustafaturan/bus"
 	"github.com/mustafaturan/monoton"
@@ -37,6 +37,13 @@ func init() {
 }
 
 func main() {
+	var wg sync.WaitGroup
+	// load printer package
+	counter.Load(&wg)
+
+	// load printer package
+	calculator.Load(&wg)
+
 	txID := monoton.Next()
 	for i := 0; i < 3; i++ {
 		bus.Emit(
@@ -55,26 +62,10 @@ func main() {
 	// printer consumer processed all events at that moment since it is synchronous
 	fmt.Println("You should see 4 events printed above!^^^")
 
+	counter.Close()
+	calculator.Close()
 	// give some time to process events for async consumers
-	time.Sleep(time.Millisecond * 25)
-
-	printEventCounts()
-	printOrderTotalAmount()
-}
-
-func printEventCounts() {
-	// Let's print event counts for each topic
-	for _, topic := range bus.ListTopics() {
-		fmt.Printf(
-			"Total evet count for %s: %d\n",
-			topic.Name,
-			counter.FetchEventCount(topic.Name),
-		)
-	}
-}
-
-func printOrderTotalAmount() {
-	fmt.Printf("Order total amount %d\n", calculator.TotalAmount())
+	wg.Wait()
 }
 
 func randomAmount() int {

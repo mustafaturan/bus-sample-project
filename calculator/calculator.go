@@ -3,6 +3,7 @@ package calculator
 import (
 	"bus-sample-project/models"
 	"fmt"
+	"sync"
 
 	"github.com/mustafaturan/bus"
 )
@@ -11,24 +12,34 @@ var total int64
 
 var c chan *bus.Event
 
-func init() {
+// Load registers the calculator handler
+func Load(wg *sync.WaitGroup) {
 	h := bus.Handler{Handle: sum, Matcher: "^order.(created|canceled)$"}
 	bus.RegisterHandler("calculator", &h)
 	fmt.Printf("Registered calculator handler...\n")
 
 	total = 0
 	c = make(chan *bus.Event)
+	wg.Add(1)
+	go calculate(wg)
+}
 
-	go calculate()
+func Close() {
+	c <- nil
 }
 
 func sum(e *bus.Event) {
 	c <- e
 }
 
-func calculate() {
+func calculate(wg *sync.WaitGroup) {
+	defer printTotal()
+	defer wg.Done()
 	for {
 		e := <-c
+		if e == nil {
+			break
+		}
 		amount := int64(e.Data.(models.Order).Amount)
 		switch e.Topic.Name {
 		case "order.created":
@@ -41,7 +52,6 @@ func calculate() {
 	}
 }
 
-// TotalAmount returns total amount
-func TotalAmount() int64 {
-	return total
+func printTotal() {
+	fmt.Printf("Order total amount %d\n", total)
 }
