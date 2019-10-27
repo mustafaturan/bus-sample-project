@@ -13,14 +13,16 @@ var c chan *bus.Event
 
 const worker = "counter"
 
+func init() {
+	topics = make(map[string]uint, 0)
+	c = make(chan *bus.Event)
+}
+
 // Start registers the counter handler
 func Start(wg *sync.WaitGroup) {
 	h := bus.Handler{Handle: count, Matcher: ".*"}
 	bus.RegisterHandler(worker, &h)
 	fmt.Printf("Registered counter handler...\n")
-
-	topics = make(map[string]uint, 0)
-	c = make(chan *bus.Event)
 
 	wg.Add(1)
 	go increment(wg)
@@ -40,16 +42,13 @@ func increment(wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer printEventCounts()
 	for {
+		// Separating the logic from channels would be better. So, please
+		// consider this is an example but do not consider as best practice.
 		e := <-c
 		if e == nil {
 			break
 		}
-		n := e.Topic.Name
-		if count, ok := topics[n]; ok {
-			topics[n] = count + 1
-		} else {
-			topics[n] = 1
-		}
+		topics[e.Topic.Name]++
 	}
 }
 

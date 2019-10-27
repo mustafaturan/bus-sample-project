@@ -28,6 +28,7 @@ func init() {
 	// regiter topics
 	bus.RegisterTopics("order.created", "order.canceled")
 
+	// printer is an synchronous handler(consumer)
 	// register the event printer handler
 	printer.Register()
 }
@@ -35,11 +36,12 @@ func init() {
 func main() {
 	var wg sync.WaitGroup
 	defer wg.Wait()
-	// register the event counter handler
+
+	// register the event counter handler (asynchronous handler)
 	counter.Start(&wg)
 	defer counter.Stop()
 
-	// register the event calculator handler
+	// register the event calculator handler (asynchronous handler)
 	calculator.Start(&wg)
 	defer calculator.Stop()
 
