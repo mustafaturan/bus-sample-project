@@ -35,11 +35,11 @@ func init() {
 func main() {
 	var wg sync.WaitGroup
 	defer wg.Wait()
-	// load printer package
+	// register the event counter handler
 	counter.Start(&wg)
 	defer counter.Stop()
 
-	// load printer package
+	// register the event calculator handler
 	calculator.Start(&wg)
 	defer calculator.Stop()
 
