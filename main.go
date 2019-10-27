@@ -28,12 +28,8 @@ func init() {
 	// regiter topics
 	bus.RegisterTopics("order.created", "order.canceled")
 
-	// load printer package
-	printer.Load()
-
-	// no need to load counter and calculator packages since we are running the
-	// FetchEventCount, and TotalAmount function from the counter package, it
-	// will auto execute the init function on load
+	// register the event printer handler
+	printer.Register()
 }
 
 func main() {

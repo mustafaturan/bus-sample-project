@@ -6,8 +6,8 @@ import (
 	"github.com/mustafaturan/bus"
 )
 
-// Load registers the printer handler
-func Load() {
+// Register registers the printer handler
+func Register() {
 	h := bus.Handler{Handle: print, Matcher: ".*"}
 	bus.RegisterHandler("printer", &h)
 	fmt.Printf("Registered printer handler...\n")
