@@ -14,7 +14,7 @@ var c chan *bus.Event
 const worker = "counter"
 
 func init() {
-	topics = make(map[string]uint, 0)
+	topics = make(map[string]uint)
 	c = make(chan *bus.Event, 5)
 }
 

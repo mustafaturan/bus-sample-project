@@ -18,7 +18,10 @@ func init() {
 	// configure id generator (it doesn't have to be monoton)
 	node := uint(1)
 	initialTime := uint(0)
-	monoton.Configure(sequencer.NewMillisecond(), node, initialTime)
+	err := monoton.Configure(sequencer.NewMillisecond(), node, initialTime)
+	if err != nil {
+		panic(err)
+	}
 
 	// configure bus package
 	if err := bus.Configure(bus.Config{Next: monoton.Next}); err != nil {
@@ -47,18 +50,24 @@ func main() {
 
 	txID := monoton.Next()
 	for i := 0; i < 3; i++ {
-		bus.Emit(
+		_, err := bus.Emit(
 			"order.created",
 			models.Order{Name: fmt.Sprintf("Product #%d", i), Amount: randomAmount()},
 			txID,
 		)
+		if err != nil {
+			fmt.Println("ERROR >>>>", err)
+		}
 	}
 
-	bus.Emit(
+	_, err := bus.Emit(
 		"order.canceled", // topic
 		models.Order{Name: "Product #N", Amount: randomAmount()}, // data
 		"", // when blank bus package auto assigns an ID using the provided gen
 	)
+	if err != nil {
+		fmt.Println("ERROR >>>>", err)
+	}
 
 	// printer consumer processed all events at that moment since it is synchronous
 	fmt.Println("You should see 4 events printed above!^^^")
