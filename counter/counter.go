@@ -15,7 +15,7 @@ const worker = "counter"
 
 func init() {
 	topics = make(map[string]uint, 0)
-	c = make(chan *bus.Event)
+	c = make(chan *bus.Event, 5)
 }
 
 // Start registers the counter handler
