@@ -78,7 +78,7 @@ fmt.Printf("Registered printer handler...\n")
 
 ### Emitting events
 
-Events can be emitted on any package. As a sample four events (two topics)
+Events can be emitted on any package. As a sample, four events (two topics)
 created on [main.go](main.go) file like:
 
 ```go
