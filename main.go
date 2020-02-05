@@ -2,43 +2,28 @@ package main
 
 import (
 	"bus-sample-project/calculator"
+	"bus-sample-project/config"
 	"bus-sample-project/counter"
 	"bus-sample-project/models"
 	"bus-sample-project/printer"
+	"context"
 	"fmt"
 	"math/rand"
 	"sync"
 
 	"github.com/mustafaturan/bus"
 	"github.com/mustafaturan/monoton"
-	"github.com/mustafaturan/monoton/sequencer"
 )
 
-func init() {
-	// configure id generator (it doesn't have to be monoton)
-	node := uint64(1)
-	initialTime := uint64(0)
-	err := monoton.Configure(sequencer.NewMillisecond(), node, initialTime)
-	if err != nil {
-		panic(err)
-	}
-
-	// configure bus package
-	if err := bus.Configure(bus.Config{Next: monoton.Next}); err != nil {
-		panic("Whoops, couldn't configure the bus package!")
-	}
-
-	// regiter topics
-	bus.RegisterTopics("order.created", "order.canceled")
-
-	// printer is an synchronous handler(consumer)
-	// register the event printer handler
-	printer.Register()
-}
-
 func main() {
+	config.Init()
+
 	var wg sync.WaitGroup
 	defer wg.Wait()
+
+	// register the event printer handler (synchronous handler)
+	printer.Start()
+	defer printer.Stop()
 
 	// register the event counter handler (asynchronous handler)
 	counter.Start(&wg)
@@ -49,28 +34,32 @@ func main() {
 	defer calculator.Stop()
 
 	txID := monoton.Next()
+	ctx := context.Background()
+	context.WithValue(ctx, bus.CtxKeyTxID, txID)
+
+	b := config.Bus
+
 	for i := 0; i < 3; i++ {
-		_, err := bus.Emit(
+		_, err := b.Emit(
+			ctx,
 			"order.created",
 			models.Order{Name: fmt.Sprintf("Product #%d", i), Amount: randomAmount()},
-			txID,
 		)
 		if err != nil {
 			fmt.Println("ERROR >>>>", err)
 		}
 	}
 
-	_, err := bus.Emit(
+	// if the txID is not available on the context and bus package sets it
+	ctx = context.Background()
+	_, err := b.Emit(
+		ctx,              // context
 		"order.canceled", // topic
 		models.Order{Name: "Product #N", Amount: randomAmount()}, // data
-		"", // when blank bus package auto assigns an ID using the provided gen
 	)
 	if err != nil {
 		fmt.Println("ERROR >>>>", err)
 	}
-
-	// printer consumer processed all events at that moment since it is synchronous
-	fmt.Println("You should see 4 events printed above!^^^")
 }
 
 func randomAmount() int {

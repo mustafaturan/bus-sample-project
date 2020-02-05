@@ -1,6 +1,7 @@
 package counter
 
 import (
+	"bus-sample-project/config"
 	"fmt"
 	"sync"
 
@@ -20,8 +21,9 @@ func init() {
 
 // Start registers the counter handler
 func Start(wg *sync.WaitGroup) {
+	b := config.Bus
 	h := bus.Handler{Handle: count, Matcher: ".*"}
-	bus.RegisterHandler(worker, &h)
+	b.RegisterHandler(worker, &h)
 	fmt.Printf("Registered counter handler...\n")
 
 	wg.Add(1)
@@ -30,7 +32,10 @@ func Start(wg *sync.WaitGroup) {
 
 // Stop deregister the counter handler
 func Stop() {
-	bus.DeregisterHandler(worker)
+	defer fmt.Printf("Deregistered counter handler...\n")
+
+	b := config.Bus
+	b.DeregisterHandler(worker)
 	c <- nil
 }
 
@@ -48,17 +53,18 @@ func increment(wg *sync.WaitGroup) {
 		if e == nil {
 			break
 		}
-		topics[e.Topic.Name]++
+		topics[e.Topic]++
 	}
 }
 
 func printEventCounts() {
-	// Let's print event counts for each topic
-	for _, topic := range bus.ListTopics() {
+	b := config.Bus
+	// Print event counts for each topic
+	for _, topic := range b.Topics() {
 		fmt.Printf(
 			"Total evet count for %s: %d\n",
-			topic.Name,
-			topics[topic.Name],
+			topic,
+			topics[topic],
 		)
 	}
 }

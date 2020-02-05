@@ -28,17 +28,29 @@ amounts.
 In the example, it is used the same example configuration from the package
 readme file.
 
+**File:** [config/config.go](config/config.go)
 ```go
-func init() {
+var Bus *bus.Bus
+
+func Init() {
 	// configure id generator (it doesn't have to be monoton)
 	node := uint64(1)
 	initialTime := uint64(0)
 	monoton.Configure(sequencer.NewMillisecond(), node, initialTime)
 
-	// configure bus package
-	if err := bus.Configure(bus.Config{Next: monoton.Next}); err != nil {
-		panic("Whoops, couldn't configure the bus package!")
+	// init an id generator
+	var idGenerator bus.Next = monoton.Next
+
+	// create a new bus instance
+	b, err := bus.NewBus(idGenerator)
+	if err != nil {
+		panic(err)
 	}
+
+	// maybe register topics in here
+	b.RegisterTopics("order.created", "order.canceled")
+
+	Bus = b
 
 	// ...
 }
@@ -49,11 +61,7 @@ func init() {
 Assume that we have two topics which are; `order.created` and `order.canceled`.
 
 ```go
-func init() {
-	// ...
-	bus.RegisterTopics("order.created", "order.canceled")
-	// ...
-}
+config.Bus.RegisterTopics("order.created", "order.canceled")
 ```
 
 ### Registering handlers
@@ -62,11 +70,10 @@ For each consumers, handler functions are registered on their `init()` functions
 like in `printer/printer.go` consumer:
 
 ```go
-func init() {
-	h := bus.Handler{Handle: print, Matcher: ".*"}
-	bus.RegisterHandler("printer", &h)
-	fmt.Printf("Registered printer handler...\n")
-}
+b := config.Bus
+h := bus.Handler{Handle: print, Matcher: ".*"}
+b.RegisterHandler("printer", &h)
+fmt.Printf("Registered printer handler...\n")
 ```
 
 ### Emitting events
@@ -75,31 +82,56 @@ Events can be emitted on any package. As a sample two events created on
 `main.go` file like:
 
 ```go
-// Three order.created events
+var wg sync.WaitGroup
+defer wg.Wait()
+
+// register the event printer handler (synchronous handler)
+printer.Start()
+defer printer.Stop()
+
+// register the event counter handler (asynchronous handler)
+counter.Start(&wg)
+defer counter.Stop()
+
+// register the event calculator handler (asynchronous handler)
+calculator.Start(&wg)
+defer calculator.Stop()
+
 txID := monoton.Next()
+ctx := context.Background()
+context.WithValue(ctx, bus.CtxKeyTxID, txID)
+
+b := config.Bus
+
 for i := 0; i < 3; i++ {
-	name := fmt.Sprintf("Product #%d", i)
-	bus.Emit(
+	_, err := b.Emit(
+		ctx,
 		"order.created",
-		models.Order{Name: name, Amount: randomAmount()},
-		txID,
+		models.Order{Name: fmt.Sprintf("Product #%d", i), Amount: randomAmount()},
 	)
+	if err != nil {
+		fmt.Println("ERROR >>>>", err)
+	}
 }
 
-// One order.canceled event
-bus.Emit(
-	"order.canceled",
-	models.Order{Name: "Product #N", Amount: randomAmount()},
-	monoton.Next(),
+// if the txID is not available on the context and bus package sets it
+ctx = context.Background()
+_, err := b.Emit(
+	ctx,              // context
+	"order.canceled", // topic
+	models.Order{Name: "Product #N", Amount: randomAmount()}, // data
 )
+if err != nil {
+	fmt.Println("ERROR >>>>", err)
+}
 ```
 
 ### Execution
 
-Execute the program:
+Execute the program with race condition checks:
 
 ```shell
-go run main.go
+go run -race main.go
 ```
 
 ### Outputs
@@ -109,9 +141,9 @@ The execution of the emitting will result similar output:
 **On load:**
 
 ```shell
-Registered calculator handler...
-Registered counter handler...
 Registered printer handler...
+Registered counter handler...
+Registered calculator handler...
 ```
 
 **After emitting events:**
@@ -132,10 +164,14 @@ You should see 4 events printed above!^^^
 Total evet count for order.canceled: 1
 Total evet count for order.created: 3
 Order total amount 166
+
+Deregistered calculator handler...
+Deregistered counter handler...
+Deregistered printer handler...
 ```
 
 ## License
 
 Apache License 2.0
 
-Copyright (c) 2019 Mustafa Turan
+Copyright (c) 2020 Mustafa Turan

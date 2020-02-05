@@ -1,9 +1,9 @@
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/mustafaturan/bus v0.1.2 h1:Atqt630eFsct7d4iY3XfHyQCWQ/IEb8Rb3PpQkq68Ek=
-github.com/mustafaturan/bus v0.1.2/go.mod h1:h7gfehm8TThv4Dcaa+wDQG7r7j6p74v+7ftr0Rq9i1Q=
-github.com/mustafaturan/bus v0.1.3 h1:gzY/CEc8uv2Oq7MQvP1GYgGF3wKWbbVDTOgneOuHylU=
-github.com/mustafaturan/bus v0.1.3/go.mod h1:h7gfehm8TThv4Dcaa+wDQG7r7j6p74v+7ftr0Rq9i1Q=
+github.com/mustafaturan/bus v1.0.0 h1:72z1AZgabwEH6sJAkhbVVP7QtsvcA8N9hNZ0c7FCRAo=
+github.com/mustafaturan/bus v1.0.0/go.mod h1:h7gfehm8TThv4Dcaa+wDQG7r7j6p74v+7ftr0Rq9i1Q=
+github.com/mustafaturan/bus v1.0.1 h1:zD8mWA3fn2EXqFYgwrgiwYuj8IMYXTnOUK4xzLx51mc=
+github.com/mustafaturan/bus v1.0.1/go.mod h1:h7gfehm8TThv4Dcaa+wDQG7r7j6p74v+7ftr0Rq9i1Q=
 github.com/mustafaturan/monoton v0.3.1/go.mod h1:FOnE7NV3s3EWPXb8/7+/OSdiMBbdlkV0Lz8p1dc+vy8=
 github.com/mustafaturan/monoton v0.4.0 h1:BUhcGhCE6OolSUAD3q/8fB85T3pSGyN1ARdkLKxqs+M=
 github.com/mustafaturan/monoton v0.4.0/go.mod h1:FOnE7NV3s3EWPXb8/7+/OSdiMBbdlkV0Lz8p1dc+vy8=

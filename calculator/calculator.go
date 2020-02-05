@@ -1,6 +1,7 @@
 package calculator
 
 import (
+	"bus-sample-project/config"
 	"bus-sample-project/models"
 	"fmt"
 	"sync"
@@ -20,8 +21,9 @@ func init() {
 
 // Start registers the calculator handler
 func Start(wg *sync.WaitGroup) {
+	b := config.Bus
 	h := bus.Handler{Handle: sum, Matcher: "^order.(created|canceled)$"}
-	bus.RegisterHandler(worker, &h)
+	b.RegisterHandler(worker, &h)
 	fmt.Printf("Registered calculator handler...\n")
 
 	wg.Add(1)
@@ -30,7 +32,10 @@ func Start(wg *sync.WaitGroup) {
 
 // Stop deregisters the calculator handler
 func Stop() {
-	bus.DeregisterHandler(worker)
+	defer fmt.Printf("Deregistered calculator handler...\n")
+
+	b := config.Bus
+	b.DeregisterHandler(worker)
 	c <- nil
 }
 
@@ -54,13 +59,13 @@ func calculate(wg *sync.WaitGroup) {
 		// I personally recommend creating separate consumer for each topic. But
 		// in this context, there is an example usage of the same consumer for
 		// multiple topics(purposes).
-		switch e.Topic.Name {
+		switch e.Topic {
 		case "order.created":
 			total += amount
 		case "order.canceled":
 			total -= amount
 		default:
-			fmt.Printf("whoops unexpected topic (%s)", e.Topic.Name)
+			fmt.Printf("whoops unexpected topic (%s)", e.Topic)
 		}
 	}
 }
