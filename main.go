@@ -12,7 +12,6 @@ import (
 	"sync"
 
 	"github.com/mustafaturan/bus"
-	"github.com/mustafaturan/monoton"
 )
 
 func main() {
@@ -33,9 +32,9 @@ func main() {
 	calculator.Start(&wg)
 	defer calculator.Stop()
 
-	txID := monoton.Next()
+	txID := config.Monoton.Next()
 	ctx := context.Background()
-	context.WithValue(ctx, bus.CtxKeyTxID, txID)
+	ctx = context.WithValue(ctx, bus.CtxKeyTxID, txID)
 
 	b := config.Bus
 

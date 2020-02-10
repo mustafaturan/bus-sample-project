@@ -9,15 +9,21 @@ import (
 // Bus is a ref to bus.Bus
 var Bus *bus.Bus
 
+// Monoton is an instance of monoton.Monoton
+var Monoton monoton.Monoton
+
 // Init inits the app config
 func Init() {
 	// configure id generator (it doesn't have to be monoton)
 	node := uint64(1)
 	initialTime := uint64(0)
-	monoton.Configure(sequencer.NewMillisecond(), node, initialTime)
+	m, err := monoton.New(sequencer.NewMillisecond(), node, initialTime)
+	if err != nil {
+		panic(err)
+	}
 
 	// init an id generator
-	var idGenerator bus.Next = monoton.Next
+	var idGenerator bus.Next = (*m).Next
 
 	// create a new bus instance
 	b, err := bus.NewBus(idGenerator)
@@ -29,4 +35,5 @@ func Init() {
 	b.RegisterTopics("order.created", "order.canceled")
 
 	Bus = b
+	Monoton = *m
 }

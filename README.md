@@ -36,10 +36,13 @@ func Init() {
 	// configure id generator (it doesn't have to be monoton)
 	node := uint64(1)
 	initialTime := uint64(0)
-	monoton.Configure(sequencer.NewMillisecond(), node, initialTime)
+	m, err := monoton.New(sequencer.NewMillisecond(), node, initialTime)
+	if err != nil {
+		panic(err)
+	}
 
 	// init an id generator
-	var idGenerator bus.Next = monoton.Next
+	var idGenerator bus.Next = (*m).Next
 
 	// create a new bus instance
 	b, err := bus.NewBus(idGenerator)
@@ -99,7 +102,7 @@ defer calculator.Stop()
 
 txID := monoton.Next()
 ctx := context.Background()
-context.WithValue(ctx, bus.CtxKeyTxID, txID)
+ctx = context.WithValue(ctx, bus.CtxKeyTxID, txID)
 
 b := config.Bus
 
