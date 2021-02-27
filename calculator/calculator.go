@@ -3,10 +3,11 @@ package calculator
 import (
 	"bus-sample-project/config"
 	"bus-sample-project/models"
+	"context"
 	"fmt"
 	"sync"
 
-	"github.com/mustafaturan/bus"
+	"github.com/mustafaturan/bus/v2"
 )
 
 var total int64
@@ -39,7 +40,7 @@ func Stop() {
 	c <- nil
 }
 
-func sum(e *bus.Event) {
+func sum(_ context.Context, e *bus.Event) {
 	c <- e
 }
 

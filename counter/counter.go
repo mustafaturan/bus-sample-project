@@ -2,10 +2,11 @@ package counter
 
 import (
 	"bus-sample-project/config"
+	"context"
 	"fmt"
 	"sync"
 
-	"github.com/mustafaturan/bus"
+	"github.com/mustafaturan/bus/v2"
 )
 
 var topics map[string]uint
@@ -39,7 +40,7 @@ func Stop() {
 	c <- nil
 }
 
-func count(e *bus.Event) {
+func count(_ context.Context, e *bus.Event) {
 	c <- e
 }
 

@@ -11,7 +11,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/mustafaturan/bus"
+	"github.com/mustafaturan/bus/v2"
 )
 
 func main() {

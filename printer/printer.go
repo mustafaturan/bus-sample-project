@@ -2,9 +2,10 @@ package printer
 
 import (
 	"bus-sample-project/config"
+	"context"
 	"fmt"
 
-	"github.com/mustafaturan/bus"
+	"github.com/mustafaturan/bus/v2"
 )
 
 // Start registers the printer handler
@@ -23,6 +24,6 @@ func Stop() {
 	b.DeregisterHandler("printer")
 }
 
-func print(e *bus.Event) {
+func print(ctx context.Context, e *bus.Event) {
 	fmt.Printf("\nEvent for %s: %+v\n\n", e.Topic, e)
 }
