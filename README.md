@@ -75,7 +75,7 @@ like in `printer/printer.go` consumer:
 ```go
 b := config.Bus
 h := bus.Handler{Handle: print, Matcher: ".*"}
-b.RegisterHandler("printer", &h)
+b.RegisterHandler("printer", h)
 fmt.Printf("Registered printer handler...\n")
 ```
 
@@ -152,25 +152,23 @@ Registered calculator handler...
 **After emitting events:**
 
 ```shell
-Event for order.created: &{ID:0RPwZrc400010001 TxID:0RPwZrc400000001 Topic:0xc00009a090 Data:{Name:Product #0 Amount:51} OccurredAt:1557375256628182000}
+Event for order.created: {ID:0SVU68UR00010001 TxID:0SVU68UR00000001 Topic:order.created Source: OccurredAt:2021-04-24 01:04:26.831182 -0700 PDT m=+0.001772439 Data:{Name:Product #0 Amount:51}}
 
 
-Event for order.created: &{ID:0RPwZrc400020001 TxID:0RPwZrc400000001 Topic:0xc00009a090 Data:{Name:Product #1 Amount:97} OccurredAt:1557375256628257000}
+Event for order.created: {ID:0SVU68UR00020001 TxID:0SVU68UR00000001 Topic:order.created Source: OccurredAt:2021-04-24 01:04:26.831743 -0700 PDT m=+0.002333823 Data:{Name:Product #1 Amount:97}}
 
 
-Event for order.created: &{ID:0RPwZrc400030001 TxID:0RPwZrc400000001 Topic:0xc00009a090 Data:{Name:Product #2 Amount:57} OccurredAt:1557375256628283000}
+Event for order.created: {ID:0SVU68UR00030001 TxID:0SVU68UR00000001 Topic:order.created Source: OccurredAt:2021-04-24 01:04:26.831813 -0700 PDT m=+0.002404064 Data:{Name:Product #2 Amount:57}}
 
 
-Event for order.canceled: &{ID:0RPwZrc400040001 TxID:0RPwZrc400050001 Topic:0xc00009a210 Data:{Name:Product #N Amount:39} OccurredAt:1557375256628348000}
-
-You should see 4 events printed above!^^^
-Total evet count for order.canceled: 1
-Total evet count for order.created: 3
-Order total amount 166
+Event for order.canceled: {ID:0SVU68UR00050001 TxID:0SVU68UR00040001 Topic:order.canceled Source: OccurredAt:2021-04-24 01:04:26.831871 -0700 PDT m=+0.002462153 Data:{Name:Product #N Amount:39}}
 
 Deregistered calculator handler...
 Deregistered counter handler...
 Deregistered printer handler...
+Order total amount 166
+Total event count for order.created: 3
+Total event count for order.canceled: 1
 ```
 
 ## License

@@ -6,29 +6,32 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/mustafaturan/bus/v2"
+	"github.com/mustafaturan/bus/v3"
 )
 
 var topics map[string]uint
 
-var c chan *bus.Event
+var c chan bus.Event
+var ctx context.Context
+var cancel context.CancelFunc
 
 const worker = "counter"
 
 func init() {
 	topics = make(map[string]uint)
-	c = make(chan *bus.Event, 5)
+	c = make(chan bus.Event, 5)
+	ctx, cancel = context.WithCancel(context.Background())
 }
 
 // Start registers the counter handler
 func Start(wg *sync.WaitGroup) {
 	b := config.Bus
 	h := bus.Handler{Handle: count, Matcher: ".*"}
-	b.RegisterHandler(worker, &h)
+	b.RegisterHandler(worker, h)
 	fmt.Printf("Registered counter handler...\n")
 
 	wg.Add(1)
-	go increment(wg)
+	go increment(ctx, wg)
 }
 
 // Stop deregister the counter handler
@@ -37,35 +40,35 @@ func Stop() {
 
 	b := config.Bus
 	b.DeregisterHandler(worker)
-	c <- nil
+	cancel()
 }
 
-func count(_ context.Context, e *bus.Event) {
+func count(_ context.Context, e bus.Event) {
 	c <- e
 }
 
-func increment(wg *sync.WaitGroup) {
+func increment(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer printEventCounts()
 	for {
 		// Separating the logic from channels would be better. So, please
 		// consider this is an example but do not consider as best practice.
-		e := <-c
-		if e == nil {
-			break
+		select {
+		case <-ctx.Done():
+			return
+		case e := <-c:
+			topics[e.Topic]++
 		}
-		topics[e.Topic]++
 	}
 }
 
 func printEventCounts() {
-	b := config.Bus
 	// Print event counts for each topic
-	for _, topic := range b.Topics() {
+	for topic, count := range topics {
 		fmt.Printf(
-			"Total evet count for %s: %d\n",
+			"Total event count for %s: %d\n",
 			topic,
-			topics[topic],
+			count,
 		)
 	}
 }

@@ -11,7 +11,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/mustafaturan/bus/v2"
+	"github.com/mustafaturan/bus/v3"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	b := config.Bus
 
 	for i := 0; i < 3; i++ {
-		_, err := b.Emit(
+		err := b.Emit(
 			ctx,
 			"order.created",
 			models.Order{Name: fmt.Sprintf("Product #%d", i), Amount: randomAmount()},
@@ -51,7 +51,7 @@ func main() {
 
 	// if the txID is not available on the context and bus package sets it
 	ctx = context.Background()
-	_, err := b.Emit(
+	err := b.Emit(
 		ctx,              // context
 		"order.canceled", // topic
 		models.Order{Name: "Product #N", Amount: randomAmount()}, // data

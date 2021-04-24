@@ -5,14 +5,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mustafaturan/bus/v2"
+	"github.com/mustafaturan/bus/v3"
 )
 
 // Start registers the printer handler
 func Start() {
 	b := config.Bus
 	h := bus.Handler{Handle: print, Matcher: ".*"}
-	b.RegisterHandler("printer", &h)
+	b.RegisterHandler("printer", h)
 	fmt.Printf("Registered printer handler...\n")
 }
 
@@ -24,6 +24,6 @@ func Stop() {
 	b.DeregisterHandler("printer")
 }
 
-func print(ctx context.Context, e *bus.Event) {
+func print(ctx context.Context, e bus.Event) {
 	fmt.Printf("\nEvent for %s: %+v\n\n", e.Topic, e)
 }

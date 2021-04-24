@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/mustafaturan/bus/v2"
+	"github.com/mustafaturan/bus/v3"
 	"github.com/mustafaturan/monoton"
 	"github.com/mustafaturan/monoton/sequencer"
 )
