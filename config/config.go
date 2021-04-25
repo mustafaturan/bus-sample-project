@@ -2,8 +2,8 @@ package config
 
 import (
 	"github.com/mustafaturan/bus/v3"
-	"github.com/mustafaturan/monoton"
-	"github.com/mustafaturan/monoton/sequencer"
+	"github.com/mustafaturan/monoton/v2"
+	"github.com/mustafaturan/monoton/v2/sequencer"
 )
 
 // Bus is a ref to bus.Bus
@@ -16,14 +16,14 @@ var Monoton monoton.Monoton
 func Init() {
 	// configure id generator (it doesn't have to be monoton)
 	node := uint64(1)
-	initialTime := uint64(0)
+	initialTime := uint64(1577865600000)
 	m, err := monoton.New(sequencer.NewMillisecond(), node, initialTime)
 	if err != nil {
 		panic(err)
 	}
 
 	// init an id generator
-	var idGenerator bus.Next = (*m).Next
+	var idGenerator bus.Next = m.Next
 
 	// create a new bus instance
 	b, err := bus.NewBus(idGenerator)
@@ -35,5 +35,5 @@ func Init() {
 	b.RegisterTopics("order.created", "order.canceled")
 
 	Bus = b
-	Monoton = *m
+	Monoton = m
 }

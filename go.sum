@@ -1,8 +1,10 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/mustafaturan/bus/v3 v3.0.0 h1:rXecnT+WoRpLbPhoxh5Qwfawfs4ma4Aa0QRp4vvcWfM=
 github.com/mustafaturan/bus/v3 v3.0.0/go.mod h1:JVCyq6Pb6S/IGI6LrzKH5vlBZ9ifsd1Js+wd4Y2+7Xg=
-github.com/mustafaturan/monoton v1.0.0 h1:8SCej+JiNn0lyps7V+Jzc1CRAkDR4EZPWrTupQ61YCQ=
-github.com/mustafaturan/monoton v1.0.0/go.mod h1:FOnE7NV3s3EWPXb8/7+/OSdiMBbdlkV0Lz8p1dc+vy8=
+github.com/mustafaturan/bus/v3 v3.0.1 h1:vyuAkxwTfkLnQtR9Jd2hgFAfOI/HMvfVTH2BA0437oc=
+github.com/mustafaturan/bus/v3 v3.0.1/go.mod h1:JVCyq6Pb6S/IGI6LrzKH5vlBZ9ifsd1Js+wd4Y2+7Xg=
+github.com/mustafaturan/monoton/v2 v2.0.0 h1:CYyDR0Qjfo4rO+Ho380AuB2k/n0ACrOeNcYMtf8QNnc=
+github.com/mustafaturan/monoton/v2 v2.0.0/go.mod h1:7OBzqOo357EfbHBL+g11SuPZ0lRcjC7L3E+ftWNOVN4=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
