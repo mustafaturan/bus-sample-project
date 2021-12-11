@@ -9,8 +9,8 @@ guide on a un-realistic use case.
 ```shell
 git clone https://github.com/mustafaturan/bus-sample-project
 cd bus-sample-project
-go get github.com/mustafaturan/monoton
-go get github.com/mustafaturan/bus
+go get github.com/mustafaturan/monoton/v3
+go get github.com/mustafaturan/bus/v3
 ```
 
 ## Scenario
