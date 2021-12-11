@@ -2,8 +2,8 @@ package config
 
 import (
 	"github.com/mustafaturan/bus/v3"
-	"github.com/mustafaturan/monoton/v2"
-	"github.com/mustafaturan/monoton/v2/sequencer"
+	"github.com/mustafaturan/monoton/v3"
+	"github.com/mustafaturan/monoton/v3/sequencer"
 )
 
 // Bus is a ref to bus.Bus
